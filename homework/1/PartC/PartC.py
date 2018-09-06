@@ -124,8 +124,6 @@ while True:
     # draw the black background onto the surface
     windowSurface.fill(BLACK)
 
-    ## Handle rectangle-flipping here. ###############################################
-    ## Set current
     # move the player
     if moveDown and player.bottom < WINDOW_HEIGHT:
         player.top += MOVESPEED
