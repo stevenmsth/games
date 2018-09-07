@@ -2,11 +2,11 @@
 import pygame, sys, time, random
 from pygame.locals import *
 
+
 class ImageRect(pygame.Rect):
     def __init__(self, image, *args):
         pygame.Rect.__init__(self, *args)
         self.image = image
-
 
 # set up pygame
 pygame.init()
@@ -106,7 +106,7 @@ while True:
                 musicPlaying = not musicPlaying
 
         if event.type == MOUSEBUTTONUP:
-            foods.append(pygame.Rect(event.pos[0] - 10, event.pos[1] - 10, 20, 20))
+            foods.append(ImageRect(random.choice((peanutButterImage, jellyImage)), event.pos[0] - 10, event.pos[1] - 10, 20, 20))
 
     foodCounter += 1
     if foodCounter >= NEWFOOD:
@@ -133,7 +133,6 @@ while True:
         player.left -= MOVESPEED
     if moveRight and player.right < WINDOW_WIDTH:
         player.right += MOVESPEED
-
 
     # draw the block onto the surface
     windowSurface.blit(playerStretchedImage, player)
