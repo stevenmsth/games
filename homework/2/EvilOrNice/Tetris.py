@@ -3,16 +3,20 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, time, pygame, sys
+import random, time, pygame, sys, tkinter
 from pygame.locals import *
 
 FPS = 25
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
 BOXSIZE = 20
-BOARDWIDTH = 10
+BOARDWIDTH = 14
 BOARDHEIGHT = 20
 BLANK = '.'
+DIFFICULTY = 0
+DIFFICULTY_MAX = 99
+
+EXTRA_CHANCE = False
 
 MOVESIDEWAYSFREQ = 0.15
 MOVEDOWNFREQ = 0.1
@@ -21,24 +25,37 @@ XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
 #               R    G    B
-WHITE       = (255, 255, 255)
-GRAY        = (185, 185, 185)
-BLACK       = (  0,   0,   0)
+TEXTCOLOR = WHITE       = (255, 255, 255)
+TEXTSHADOWCOLOR = GRAY        = (185, 185, 185)
+BGCOLOR = BLACK       = (  0,   0,   0)
 RED         = (155,   0,   0)
 LIGHTRED    = (175,  20,  20)
 GREEN       = (  0, 155,   0)
 LIGHTGREEN  = ( 20, 175,  20)
-BLUE        = (  0,   0, 155)
+BORDERCOLOR = BLUE  = (  0,   0, 155)
 LIGHTBLUE   = ( 20,  20, 175)
 YELLOW      = (155, 155,   0)
 LIGHTYELLOW = (175, 175,  20)
+PURPLE = ( 128,0,128)
+LIGHTPURPLE = ( 255,0,255)
+ORANGE = (255,69,0)
+LIGHTORANGE = (255,165,0)
+BROWN = (139, 69, 19)
+LIGHTBROWN = (205, 133, 63)
+VIOLET = (148,  0, 211)
+LIGHTVIOLET = (238, 130, 238)
 
-BORDERCOLOR = BLUE
-BGCOLOR = BLACK
-TEXTCOLOR = WHITE
-TEXTSHADOWCOLOR = GRAY
+
+
 COLORS      = (     BLUE,      GREEN,      RED,      YELLOW)
 LIGHTCOLORS = (LIGHTBLUE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW)
+
+EVIL_COLORS = (PURPLE, ORANGE)
+EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE)
+
+NICE_COLORS = (BROWN, VIOLET)
+NICE_LIGHT_COLORS = (LIGHTBROWN, LIGHTVIOLET)
+
 assert len(COLORS) == len(LIGHTCOLORS) # each color must have light color
 
 TEMPLATEWIDTH = 5
@@ -155,8 +172,77 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'T': T_SHAPE_TEMPLATE}
 
 
+
+
+HOLE_MAKER_TEMPLATE = [['.....',
+                        '.....',
+                        '..O..',
+                        '.....',
+                        '.....']]
+
+EXTRA_CHANCE_TEMPLATE = [['.....',
+                          '.....',
+                          '..OO.',
+                          '.....',
+                          '.....'],
+                         ['.....',
+                          '.....',
+                          '..O..',
+                          '..O..',
+                          '.....'],
+                         ['.....',
+                          '.....',
+                          '.OO..',
+                          '.....',
+                          '.....'],
+                         ['.....',
+                          '..O..',
+                          '..O..',
+                          '.....',
+                          '.....']
+                         ]
+
+EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE}
+EVIL_PIECE_COLOR_NUMBER = {"HM": 0}
+
+NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE}
+NICE_PIECE_COLOR_NUMBER = {"EC": 0}
+
+
+difficulty = tkinter.Tk()
+difficulty.geometry("400x150")
+
+frame = tkinter.Frame(difficulty)
+frame.pack()
+
+message = tkinter.Label(frame, text="Enter your difficulty below (an integer between 0 and 100\n")
+message.pack()
+
+dif = tkinter.Entry(frame)
+dif.pack()
+
+def setDifficulty():
+    global DIFFICULTY
+    temp = dif.get()
+    try:
+        DIFFICULTY = int(temp)
+    except:
+        message.config(text ="Not an integer number.  Enter an integer between 0 and 100.")
+        return -1
+    if(DIFFICULTY < 0 or DIFFICULTY > 100):
+        DIFFICULTY = 0
+        message.config(text ="Number must be an integer between 0 and 100")
+        return -1
+    difficulty.withdraw()
+    difficulty.quit()
+
+choose_dif = tkinter.Button(frame, text = "Confirm Difficulty", command = setDifficulty)
+choose_dif.pack()
+
+
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
+    difficulty.mainloop()
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -178,6 +264,7 @@ def main():
 
 def runGame():
     # setup variables for the start of the game
+    global EXTRA_CHANCE
     board = getBlankBoard()
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
@@ -199,7 +286,11 @@ def runGame():
             lastFallTime = time.time() # reset lastFallTime
 
             if not isValidPosition(board, fallingPiece):
-                return # can't fit a new piece on the board, so game over
+                if EXTRA_CHANCE:
+                    board = getBlankBoard()
+                    EXTRA_CHANCE = False
+                else:
+                    return # can't fit a new piece on the board, so game over
 
         checkForQuit()
         for event in pygame.event.get(): # event handling loop
@@ -222,30 +313,12 @@ def runGame():
 
             elif event.type == KEYDOWN:
                 # moving the piece sideways
-                if (event.key == K_LEFT or event.key == K_a) and isValidPosition(board, fallingPiece, adjX=-1):
-                    fallingPiece['x'] -= 1
-                    movingLeft = True
-                    movingRight = False
-                    lastMoveSidewaysTime = time.time()
+                movingLeft, movingRight, lastMoveSidewaysTime = moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSidewaysTime)
 
-                elif (event.key == K_RIGHT or event.key == K_d) and isValidPosition(board, fallingPiece, adjX=1):
-                    fallingPiece['x'] += 1
-                    movingRight = True
-                    movingLeft = False
-                    lastMoveSidewaysTime = time.time()
-
-                # rotating the piece (if there is room to rotate)
-                elif (event.key == K_UP or event.key == K_w):
-                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
-                    if not isValidPosition(board, fallingPiece):
-                        fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
-                elif (event.key == K_q): # rotate the other direction
-                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
-                    if not isValidPosition(board, fallingPiece):
-                        fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+                rotatePiece(event, fallingPiece, board)
 
                 # making the piece fall faster with the down key
-                elif (event.key == K_DOWN or event.key == K_s):
+                if (event.key == K_DOWN or event.key == K_s):
                     movingDown = True
                     if isValidPosition(board, fallingPiece, adjY=1):
                         fallingPiece['y'] += 1
@@ -281,6 +354,8 @@ def runGame():
                 addToBoard(board, fallingPiece)
                 score += removeCompleteLines(board)
                 level, fallFreq = calculateLevelAndFallFreq(score)
+                if(fallingPiece["shape"] == "HM"):
+                    holeMaker(fallingPiece, board)
                 fallingPiece = None
             else:
                 # piece did not land, just move the piece down
@@ -288,10 +363,7 @@ def runGame():
                 lastFallTime = time.time()
 
         # drawing everything on the screen
-        DISPLAYSURF.fill(BGCOLOR)
-        drawBoard(board)
-        drawStatus(score, level)
-        drawNextPiece(nextPiece)
+        drawAll(BGCOLOR, board, score, level, nextPiece)
         if fallingPiece != None:
             drawPiece(fallingPiece)
 
@@ -362,12 +434,33 @@ def calculateLevelAndFallFreq(score):
 
 def getNewPiece():
     # return a random new piece in a random rotation and color
-    shape = random.choice(list(PIECES.keys()))
-    newPiece = {'shape': shape,
-                'rotation': random.randint(0, len(PIECES[shape]) - 1),
-                'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-                'y': -2, # start it above the board (i.e. less than 0)
-                'color': random.randint(0, len(COLORS)-1)}
+    piece_type = random.randint(0, 19)
+    if(piece_type == 19):
+        good_or_bad = random.randint(0,DIFFICULTY_MAX)
+        if(good_or_bad < DIFFICULTY):
+            shape = random.choice(list(EVIL_PIECES.keys()))
+            newPiece = {'shape': shape,
+             'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+             'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+             'y': -2,  # start it above the board (i.e. less than 0)
+             'color': EVIL_PIECE_COLOR_NUMBER[shape],
+             'alignment': "evil"}
+        else:
+            shape = random.choice(list(NICE_PIECES.keys()))
+            newPiece = {'shape': shape,
+                        'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+                        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+                        'y': -2,  # start it above the board (i.e. less than 0)
+                        'color': NICE_PIECE_COLOR_NUMBER[shape],
+                        'alignment': "nice"}
+    else:
+        shape = random.choice(list(PIECES.keys()))
+        newPiece = {'shape': shape,
+                    'rotation': random.randint(0, len(PIECES[shape]) - 1),
+                    'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+                    'y': -2, # start it above the board (i.e. less than 0)
+                    'color': random.randint(0, len(COLORS)-1),
+                    'alignment': "neutral"}
     return newPiece
 
 
@@ -375,8 +468,15 @@ def addToBoard(board, piece):
     # fill in the board based on piece's location, shape, and rotation
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
-            if PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
-                board[x + piece['x']][y + piece['y']] = piece['color']
+            if(piece['alignment'] == "neutral"):
+                if PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
+            elif(piece["alignment"] == "evil"):
+                if EVIL_PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
+            elif (piece["alignment"] == "nice"):
+                if NICE_PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
 
 
 def getBlankBoard():
@@ -396,12 +496,27 @@ def isValidPosition(board, piece, adjX=0, adjY=0):
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
             isAboveBoard = y + piece['y'] + adjY < 0
-            if isAboveBoard or PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
-                continue
-            if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
-                return False
-            if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
-                return False
+            if(piece["alignment"] == "neutral"):
+                if isAboveBoard or PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
+            elif (piece["alignment"] == "evil"):
+                if isAboveBoard or EVIL_PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
+            elif (piece["alignment"] == "nice"):
+                if isAboveBoard or NICE_PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
     return True
 
 def isCompleteLine(board, y):
@@ -409,8 +524,15 @@ def isCompleteLine(board, y):
     for x in range(BOARDWIDTH):
         if board[x][y] == BLANK:
             return False
+    giveExtraChance(board, y)
     return True
 
+def giveExtraChance(board, y):
+    # Check if there is an extra chance block in a completed row
+    global EXTRA_CHANCE
+    for x in range(BOARDWIDTH):
+        if (board[x][y])[2] == "EC":
+            EXTRA_CHANCE = True
 
 def removeCompleteLines(board):
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
@@ -439,8 +561,15 @@ def convertToPixelCoords(boxx, boxy):
     # coordinates of the location on the screen.
     return (XMARGIN + (boxx * BOXSIZE)), (TOPMARGIN + (boxy * BOXSIZE))
 
+def drawAll(BGCOLOR, board, score, level, nextPiece):
+    DISPLAYSURF.fill(BGCOLOR)
+    drawBoard(board)
+    drawStatus(score, level)
+    drawNextPiece(nextPiece)
+    drawExtraChanceStatus()
 
-def drawBox(boxx, boxy, color, pixelx=None, pixely=None):
+
+def drawBox(boxx, boxy, color, alignment, pixelx=None, pixely=None):
     # draw a single box (each tetromino piece has four boxes)
     # at xy coordinates on the board. Or, if pixelx & pixely
     # are specified, draw to the pixel coordinates stored in
@@ -449,8 +578,15 @@ def drawBox(boxx, boxy, color, pixelx=None, pixely=None):
         return
     if pixelx == None and pixely == None:
         pixelx, pixely = convertToPixelCoords(boxx, boxy)
-    pygame.draw.rect(DISPLAYSURF, COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
-    pygame.draw.rect(DISPLAYSURF, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    if(alignment == "neutral"):
+        pygame.draw.rect(DISPLAYSURF, COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    elif(alignment == "evil"):
+        pygame.draw.rect(DISPLAYSURF, EVIL_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, EVIL_LIGHT_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    elif(alignment == "nice"):
+        pygame.draw.rect(DISPLAYSURF, NICE_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, NICE_LIGHT_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
 
 
 def drawBoard(board):
@@ -462,7 +598,10 @@ def drawBoard(board):
     # draw the individual boxes on the board
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
-            drawBox(x, y, board[x][y])
+            if(board[x][y] == BLANK):
+                drawBox(x, y, board[x][y], 'neutral')
+            else:
+                drawBox(x, y, board[x][y][0], board[x][y][1])
 
 
 def drawStatus(score, level):
@@ -480,7 +619,12 @@ def drawStatus(score, level):
 
 
 def drawPiece(piece, pixelx=None, pixely=None):
-    shapeToDraw = PIECES[piece['shape']][piece['rotation']]
+    if(piece["alignment"] == "neutral"):
+        shapeToDraw = PIECES[piece['shape']][piece['rotation']]
+    elif(piece["alignment"] == "evil"):
+        shapeToDraw = EVIL_PIECES[piece['shape']][piece['rotation']]
+    elif(piece["alignment"] == "nice"):
+        shapeToDraw = NICE_PIECES[piece['shape']][piece['rotation']]
     if pixelx == None and pixely == None:
         # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
         pixelx, pixely = convertToPixelCoords(piece['x'], piece['y'])
@@ -489,7 +633,7 @@ def drawPiece(piece, pixelx=None, pixely=None):
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
             if shapeToDraw[y][x] != BLANK:
-                drawBox(None, None, piece['color'], pixelx + (x * BOXSIZE), pixely + (y * BOXSIZE))
+                drawBox(None, None, piece['color'], piece['alignment'], pixelx + (x * BOXSIZE), pixely + (y * BOXSIZE))
 
 
 def drawNextPiece(piece):
@@ -500,6 +644,69 @@ def drawNextPiece(piece):
     DISPLAYSURF.blit(nextSurf, nextRect)
     # draw the "next" piece
     drawPiece(piece, pixelx=WINDOWWIDTH-120, pixely=100)
+
+def drawExtraChanceStatus():
+    if EXTRA_CHANCE:
+        ec_status = "Yes"
+    else:
+        ec_status = "No"
+    nextSurf = BASICFONT.render('Extra Chance?  ' + ec_status, True, TEXTCOLOR)
+    nextRect = nextSurf.get_rect()
+    nextRect.topleft = (WINDOWWIDTH - 170, 200)
+    DISPLAYSURF.blit(nextSurf, nextRect)
+
+def moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSidewaysTime):
+    if (event.key == K_LEFT or event.key == K_a) and isValidPosition(board, fallingPiece, adjX=-1):
+        fallingPiece['x'] -= 1
+        return (True, False, time.time())
+
+    elif (event.key == K_RIGHT or event.key == K_d) and isValidPosition(board, fallingPiece, adjX=1):
+        fallingPiece['x'] += 1
+        return(False, True, time.time())
+    return(movingLeft, movingRight, lastMoveSidewaysTime)
+
+def rotatePiece(event, fallingPiece, board):
+    # rotating the piece (if there is room to rotate)
+    if (event.key == K_UP or event.key == K_w):
+        if(fallingPiece["alignment"] == "neutral"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+        elif(fallingPiece["alignment"] == "evil"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+        elif (fallingPiece["alignment"] == "nice"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+    elif (event.key == K_q):  # rotate the other direction
+        if (fallingPiece["alignment"] == "neutral"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+        elif (fallingPiece["alignment"] == "evil"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
+        elif (fallingPiece["alignment"] == "nice"):
+            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+            if not isValidPosition(board, fallingPiece):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
+
+def holeMaker(piece, board):
+    if(piece['y'] < BOARDHEIGHT - 3):
+        to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
+        board[piece['x'] + 2][to_delete] = BLANK
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
