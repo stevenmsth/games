@@ -180,6 +180,27 @@ HOLE_MAKER_TEMPLATE = [['.....',
                         '.....',
                         '.....']]
 
+V_TEMPLATE =          [['.....',
+                        '.0.0.',
+                        '..O..',
+                        '.....',
+                        '.....'],
+                       ['.....',
+                        '...0.',
+                        '..O..',
+                        '...0.',
+                        '.....'],
+                       ['.....',
+                        '.....',
+                        '..O..',
+                        '.0.0.',
+                        '.....'],
+                       ['.....',
+                        '.0...',
+                        '..O..',
+                        '.0...',
+                        '.....']]
+
 EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....',
                           '..OO.',
@@ -202,8 +223,8 @@ EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....']
                          ]
 
-EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE}
-EVIL_PIECE_COLOR_NUMBER = {"HM": 0}
+EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE, "V": V_TEMPLATE}
+EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 0}
 
 NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE}
 NICE_PIECE_COLOR_NUMBER = {"EC": 0}
