@@ -180,6 +180,49 @@ HOLE_MAKER_TEMPLATE = [['.....',
                         '.....',
                         '.....']]
 
+V_TEMPLATE =          [['.....',
+                        '.0.0.',
+                        '..O..',
+                        '.....',
+                        '.....'],
+                       ['.....',
+                        '...0.',
+                        '..O..',
+                        '...0.',
+                        '.....'],
+                       ['.....',
+                        '.....',
+                        '..O..',
+                        '.0.0.',
+                        '.....'],
+                       ['.....',
+                        '.0...',
+                        '..O..',
+                        '.0...',
+                        '.....']]
+
+
+SEAN_TEMPLATE =       [['0...0',
+                        '.0.0.',
+                        '..O..',
+                        '.0.0.',
+                        '0...0'],
+                       ['0...0',
+                        '.0.0.',
+                        '..O..',
+                        '.0.0.',
+                        '0...0'],
+                       ['0...0',
+                        '.0.0.',
+                        '..O..',
+                        '.0.0.',
+                        '0...0'],
+                       ['0...0',
+                        '.0.0.',
+                        '..O..',
+                        '.0.0.',
+                        '0...0'],]
+
 EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....',
                           '..OO.',
@@ -202,8 +245,8 @@ EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....']
                          ]
 
-EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE}
-EVIL_PIECE_COLOR_NUMBER = {"HM": 0}
+EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
+EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 0, "SEAN": 0}
 
 NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE}
 NICE_PIECE_COLOR_NUMBER = {"EC": 0}
@@ -356,6 +399,8 @@ def runGame():
                 level, fallFreq = calculateLevelAndFallFreq(score)
                 if(fallingPiece["shape"] == "HM"):
                     holeMaker(fallingPiece, board)
+                elif(fallingPiece["shape"] == "SEAN"):
+                    holeMaker2(fallingPiece, board)
                 fallingPiece = None
             else:
                 # piece did not land, just move the piece down
@@ -699,14 +744,16 @@ def holeMaker(piece, board):
         to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
         board[piece['x'] + 2][to_delete] = BLANK
 
-
-
-
-
-
-
-
-
+def holeMaker2(piece, board):
+    if (piece['y'] < BOARDHEIGHT - 3):
+        to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
+        board[piece['x'] + 2][to_delete] = BLANK
+        to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
+        board[piece['x'] + 2][to_delete] = BLANK
+        to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
+        board[piece['x'] + 2][to_delete] = BLANK
+        to_delete = random.randint(piece['y'] + 3, BOARDHEIGHT - 1)
+        board[piece['x'] + 2][to_delete] = BLANK
 
 
 if __name__ == '__main__':
