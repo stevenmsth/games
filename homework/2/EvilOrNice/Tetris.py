@@ -49,6 +49,9 @@ LIGHTBROWN = (205, 133, 63)
 VIOLET = (148,  0, 211)
 LIGHTVIOLET = (238, 130, 238)
 GREY = (128, 128, 128)
+LIGHTGREY = (175, 175, 175)
+INDIAN_RED = (205,92,92)
+LIGHT_INDIAN_RED = (240,128,128)
 
 
 
@@ -56,10 +59,11 @@ COLORS      = (     BLUE,      GREEN,      RED,      YELLOW)
 LIGHTCOLORS = (LIGHTBLUE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW)
 
 EVIL_COLORS = (PURPLE, ORANGE, GREY)
-EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE)
+EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE, LIGHTGREY)
 
-NICE_COLORS = (BROWN, VIOLET)
-NICE_LIGHT_COLORS = (LIGHTBROWN, LIGHTVIOLET)
+NICE_COLORS = (BROWN, VIOLET, INDIAN_RED)
+NICE_LIGHT_COLORS = (LIGHTBROWN, LIGHTVIOLET, LIGHT_INDIAN_RED)
+
 
 assert len(COLORS) == len(LIGHTCOLORS) # each color must have light color
 
@@ -179,7 +183,7 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
 
 
 
-HOLE_MAKER_TEMPLATE = [['.....',
+SINGLE_TEMPLATE     = [['.....',
                         '.....',
                         '..O..',
                         '.....',
@@ -247,11 +251,11 @@ RE_ROLL_TEMPLATE =      [['.....',
                           '.....']
                          ]
 
-EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
-EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 0, "SEAN": 0}
+EVIL_PIECES = {"HM": SINGLE_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
+EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 1, "SEAN": 2}
 
-NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE, "RR":RE_ROLL_TEMPLATE}
-NICE_PIECE_COLOR_NUMBER = {"EC": 0, "RR": 1}
+NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE, "RR":RE_ROLL_TEMPLATE, "ONE": SINGLE_TEMPLATE}
+NICE_PIECE_COLOR_NUMBER = {"EC": 0, "RR": 1, "ONE":2}
 
 
 difficulty = tkinter.Tk()
@@ -492,7 +496,7 @@ def getNewPiece():
         if(good_or_bad < DIFFICULTY):
             shape = random.choice(list(EVIL_PIECES.keys()))
             newPiece = {'shape': shape,
-             'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+             'rotation': random.randint(0, len(SINGLE_TEMPLATE) - 1),
              'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
              'y': -2,  # start it above the board (i.e. less than 0)
              'color': EVIL_PIECE_COLOR_NUMBER[shape],
@@ -500,7 +504,7 @@ def getNewPiece():
         else:
             shape = random.choice(list(NICE_PIECES.keys()))
             newPiece = {'shape': shape,
-                        'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+                        'rotation': random.randint(0, len(SINGLE_TEMPLATE) - 1),
                         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
                         'y': -2,  # start it above the board (i.e. less than 0)
                         'color': NICE_PIECE_COLOR_NUMBER[shape],
