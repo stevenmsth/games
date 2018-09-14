@@ -17,6 +17,7 @@ DIFFICULTY = 0
 DIFFICULTY_MAX = 99
 
 EXTRA_CHANCE = False
+REROLLS = 0
 
 # locking rotation of pieces chance after certain difficulty is selected
 STOPROTATION = 0
@@ -206,11 +207,11 @@ V_TEMPLATE =          [['.....',
                         '.....']]
 
 
-SEAN_TEMPLATE =       [['0...0',
+SEAN_TEMPLATE =       [['.....',
                         '.0.0.',
                         '..O..',
                         '.0.0.',
-                        '0...0']]
+                        '.....']]
 
 EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....',
@@ -234,11 +235,23 @@ EXTRA_CHANCE_TEMPLATE = [['.....',
                           '.....']
                          ]
 
+RE_ROLL_TEMPLATE =      [['.....',
+                          '.....',
+                          '.OOO.',
+                          '.....',
+                          '.....'],
+                         ['.....',
+                          '..O..',
+                          '..O..',
+                          '..O..',
+                          '.....']
+                         ]
+
 EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
 EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 0, "SEAN": 0}
 
-NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE}
-NICE_PIECE_COLOR_NUMBER = {"EC": 0}
+NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE, "RR":RE_ROLL_TEMPLATE}
+NICE_PIECE_COLOR_NUMBER = {"EC": 0, "RR": 1}
 
 
 difficulty = tkinter.Tk()
@@ -297,6 +310,7 @@ def main():
 def runGame():
     # setup variables for the start of the game
     global EXTRA_CHANCE
+    global REROLLS
     board = getBlankBoard()
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
@@ -342,6 +356,9 @@ def runGame():
                     movingRight = False
                 elif (event.key == K_DOWN or event.key == K_s):
                     movingDown = False
+                elif(event.key == K_r and REROLLS > 0):
+                    fallingPiece = getNewPiece()
+                    REROLLS -= 1
 
             elif event.type == KEYDOWN:
                 # moving the piece sideways
@@ -466,11 +483,11 @@ def calculateLevelAndFallFreq(score):
 
 def getNewPiece():
     # return a random new piece in a random rotation and color
-    piece_type = random.randint(0, 19)
+    piece_type = random.randint(0, 3)
     rotoStop = random.randint(0, 3)
     global STOPROTATION
     STOPROTATION = rotoStop
-    if(piece_type == 19):
+    if(piece_type == 3):
         good_or_bad = random.randint(0,DIFFICULTY_MAX)
         if(good_or_bad < DIFFICULTY):
             shape = random.choice(list(EVIL_PIECES.keys()))
@@ -559,15 +576,18 @@ def isCompleteLine(board, y):
     for x in range(BOARDWIDTH):
         if board[x][y] == BLANK:
             return False
-    giveExtraChance(board, y)
+    giveSpecialBonuses(board, y)
     return True
 
-def giveExtraChance(board, y):
+def giveSpecialBonuses(board, y):
     # Check if there is an extra chance block in a completed row
     global EXTRA_CHANCE
+    global REROLLS
     for x in range(BOARDWIDTH):
         if (board[x][y])[2] == "EC":
             EXTRA_CHANCE = True
+        if (board[x][y])[2] == "RR":
+            REROLLS += 1
 
 def removeCompleteLines(board):
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
@@ -602,6 +622,7 @@ def drawAll(BGCOLOR, board, score, level, nextPiece):
     drawStatus(score, level)
     drawNextPiece(nextPiece)
     drawExtraChanceStatus()
+    drawReRollsStatus()
 
 
 def drawBox(boxx, boxy, color, alignment, pixelx=None, pixely=None):
@@ -688,6 +709,12 @@ def drawExtraChanceStatus():
     nextSurf = BASICFONT.render('Extra Chance?  ' + ec_status, True, TEXTCOLOR)
     nextRect = nextSurf.get_rect()
     nextRect.topleft = (WINDOWWIDTH - 170, 200)
+    DISPLAYSURF.blit(nextSurf, nextRect)
+
+def drawReRollsStatus():
+    nextSurf = BASICFONT.render('Re-rolls:  ' + str(REROLLS), True, TEXTCOLOR)
+    nextRect = nextSurf.get_rect()
+    nextRect.topleft = (WINDOWWIDTH - 170, 300)
     DISPLAYSURF.blit(nextSurf, nextRect)
 
 def moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSidewaysTime):
