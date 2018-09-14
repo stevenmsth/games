@@ -20,7 +20,7 @@ EXTRA_CHANCE = False
 REROLLS = 0
 
 # locking rotation of pieces chance after certain difficulty is selected
-STOP_ROTATION = 0
+STOPROTATION = 0
 
 MOVESIDEWAYSFREQ = 0.15
 MOVEDOWNFREQ = 0.1
@@ -28,45 +28,45 @@ MOVEDOWNFREQ = 0.1
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
-# Begin color definitions
-# =======================
 #               R    G    B
 TEXTCOLOR = WHITE       = (255, 255, 255)
-TEXTSHADOWCOLOR = GRAY  = (185, 185, 185)
-BGCOLOR = BLACK         = (  0,   0,   0)
-RED                     = (155,   0,   0)
-LIGHTRED                = (175,  20,  20)
-GREEN                   = (  0, 155,   0)
-LIGHTGREEN              = ( 20, 175,  20)
-BORDERCOLOR = BLUE      = (  0,   0, 155)
-LIGHTBLUE               = ( 20,  20, 175)
-YELLOW                  = (155, 155,   0)
-LIGHTYELLOW             = (175, 175,  20)
-PURPLE                  = ( 128,  0, 128)
-LIGHTPURPLE             = ( 255,  0, 255)
-ORANGE                  = (255,  69,   0)
-LIGHTORANGE             = (255, 165,   0)
-BROWN                   = (139,  69,  19)
-LIGHTBROWN              = (205, 133,  63)
-VIOLET                  = (148,   0, 211)
-LIGHTVIOLET             = (238, 130, 238)
-GREY                    = (128, 128, 128)
+TEXTSHADOWCOLOR = GRAY        = (185, 185, 185)
+BGCOLOR = BLACK       = (  0,   0,   0)
+RED         = (155,   0,   0)
+LIGHTRED    = (175,  20,  20)
+GREEN       = (  0, 155,   0)
+LIGHTGREEN  = ( 20, 175,  20)
+BORDERCOLOR = BLUE  = (  0,   0, 155)
+LIGHTBLUE   = ( 20,  20, 175)
+YELLOW      = (155, 155,   0)
+LIGHTYELLOW = (175, 175,  20)
+PURPLE = ( 128,0,128)
+LIGHTPURPLE = ( 255,0,255)
+ORANGE = (255,69,0)
+LIGHTORANGE = (255,165,0)
+BROWN = (139, 69, 19)
+LIGHTBROWN = (205, 133, 63)
+VIOLET = (148,  0, 211)
+LIGHTVIOLET = (238, 130, 238)
+GREY = (128, 128, 128)
+LIGHTGREY = (175, 175, 175)
+INDIAN_RED = (205,92,92)
+LIGHT_INDIAN_RED = (240,128,128)
+
+
 
 COLORS      = (     BLUE,      GREEN,      RED,      YELLOW)
 LIGHTCOLORS = (LIGHTBLUE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW)
 
 EVIL_COLORS = (PURPLE, ORANGE, GREY)
-EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE)
+EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE, LIGHTGREY)
 
-NICE_COLORS = (BROWN, VIOLET)
-NICE_LIGHT_COLORS = (LIGHTBROWN, LIGHTVIOLET)
+NICE_COLORS = (BROWN, VIOLET, INDIAN_RED)
+NICE_LIGHT_COLORS = (LIGHTBROWN, LIGHTVIOLET, LIGHT_INDIAN_RED)
+
 
 assert len(COLORS) == len(LIGHTCOLORS) # each color must have light color
-# =====================
-# End color definitions
 
-# Begin shape definitions
-# =======================
 TEMPLATEWIDTH = 5
 TEMPLATEHEIGHT = 5
 
@@ -180,7 +180,10 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'O': O_SHAPE_TEMPLATE,
           'T': T_SHAPE_TEMPLATE}
 
-HOLE_MAKER_TEMPLATE = [['.....',
+
+
+
+SINGLE_TEMPLATE     = [['.....',
                         '.....',
                         '..O..',
                         '.....',
@@ -248,13 +251,12 @@ RE_ROLL_TEMPLATE =      [['.....',
                           '.....']
                          ]
 
-EVIL_PIECES = {"HM": HOLE_MAKER_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
-EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 0, "SEAN": 0}
+EVIL_PIECES = {"HM": SINGLE_TEMPLATE, "V": V_TEMPLATE, "SEAN": SEAN_TEMPLATE}
+EVIL_PIECE_COLOR_NUMBER = {"HM": 0, "V": 1, "SEAN": 2}
 
-NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE, "RR":RE_ROLL_TEMPLATE}
-NICE_PIECE_COLOR_NUMBER = {"EC": 0, "RR": 1}
-# =====================
-# End shape definitions
+NICE_PIECES = {"EC":EXTRA_CHANCE_TEMPLATE, "RR":RE_ROLL_TEMPLATE, "ONE": SINGLE_TEMPLATE}
+NICE_PIECE_COLOR_NUMBER = {"EC": 0, "RR": 1, "ONE":2}
+
 
 difficulty = tkinter.Tk()
 difficulty.geometry("400x150")
@@ -273,8 +275,8 @@ def setDifficulty():
     temp = dif.get()
     try:
         DIFFICULTY = int(temp)
-    except ValueError:
-        message.config(text ="Not an integer. Enter an integer between 0 and 100.")
+    except:
+        message.config(text ="Not an integer number.  Enter an integer between 0 and 100.")
         return -1
     if(DIFFICULTY < 0 or DIFFICULTY > 100):
         DIFFICULTY = 0
@@ -298,8 +300,11 @@ def main():
     pygame.display.set_caption('Tetromino')
 
     showTextScreen('Tetromino')
-    while True:  # game loop
-        pygame.mixer.music.load(random.choice(('tetrisb.mid', 'tetrisc.mid')))
+    while True: # game loop
+        if random.randint(0, 1) == 0:
+            pygame.mixer.music.load('tetrisb.mid')
+        else:
+            pygame.mixer.music.load('tetrisc.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
@@ -314,7 +319,7 @@ def runGame():
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
     lastFallTime = time.time()
-    movingDown = False  # note: there is no movingUp variable
+    movingDown = False # note: there is no movingUp variable
     movingLeft = False
     movingRight = False
     score = 0
@@ -335,16 +340,16 @@ def runGame():
                     board = getBlankBoard()
                     EXTRA_CHANCE = False
                 else:
-                    return  # can't fit a new piece on the board, so game over
+                    return # can't fit a new piece on the board, so game over
 
         checkForQuit()
-        for event in pygame.event.get():  # event handling loop
+        for event in pygame.event.get(): # event handling loop
             if event.type == KEYUP:
                 if (event.key == K_p):
                     # Pausing the game
                     DISPLAYSURF.fill(BGCOLOR)
                     pygame.mixer.music.stop()
-                    showTextScreen('Paused')  # pause until a key press
+                    showTextScreen('Paused') # pause until a key press
                     pygame.mixer.music.play(-1, 0.0)
                     lastFallTime = time.time()
                     lastMoveDownTime = time.time()
@@ -465,12 +470,12 @@ def showTextScreen(text):
 
 
 def checkForQuit():
-    for event in pygame.event.get(QUIT):  # get all the QUIT events
-        terminate()  # terminate if any QUIT events are present
-    for event in pygame.event.get(KEYUP):  # get all the KEYUP events
+    for event in pygame.event.get(QUIT): # get all the QUIT events
+        terminate() # terminate if any QUIT events are present
+    for event in pygame.event.get(KEYUP): # get all the KEYUP events
         if event.key == K_ESCAPE:
-            terminate()  # terminate if the KEYUP event was for the Esc key
-        pygame.event.post(event)  # put the other KEYUP event objects back
+            terminate() # terminate if the KEYUP event was for the Esc key
+        pygame.event.post(event) # put the other KEYUP event objects back
 
 
 def calculateLevelAndFallFreq(score):
@@ -480,18 +485,18 @@ def calculateLevelAndFallFreq(score):
     fallFreq = 0.27 - (level * 0.02)
     return level, fallFreq
 
-
 def getNewPiece():
     # return a random new piece in a random rotation and color
     piece_type = random.randint(0, 3)
-    global STOP_ROTATION
-    STOP_ROTATION = random.randint(0, 3)
+    rotoStop = random.randint(0, 3)
+    global STOPROTATION
+    STOPROTATION = rotoStop
     if(piece_type == 3):
         good_or_bad = random.randint(0,DIFFICULTY_MAX)
         if(good_or_bad < DIFFICULTY):
             shape = random.choice(list(EVIL_PIECES.keys()))
             newPiece = {'shape': shape,
-             'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+             'rotation': random.randint(0, len(SINGLE_TEMPLATE) - 1),
              'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
              'y': -2,  # start it above the board (i.e. less than 0)
              'color': EVIL_PIECE_COLOR_NUMBER[shape],
@@ -499,7 +504,7 @@ def getNewPiece():
         else:
             shape = random.choice(list(NICE_PIECES.keys()))
             newPiece = {'shape': shape,
-                        'rotation': random.randint(0, len(HOLE_MAKER_TEMPLATE) - 1),
+                        'rotation': random.randint(0, len(SINGLE_TEMPLATE) - 1),
                         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
                         'y': -2,  # start it above the board (i.e. less than 0)
                         'color': NICE_PIECE_COLOR_NUMBER[shape],
@@ -517,18 +522,17 @@ def getNewPiece():
 
 def addToBoard(board, piece):
     # fill in the board based on piece's location, shape, and rotation
-    alignment = piece['alignment']
-    if alignment == "neutral":
-        pieces = PIECES
-    elif alignment == "evil":
-        pieces = EVIL_PIECES
-    elif alignment == "nice":
-        pieces = NICE_PIECES
-
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
-            if pieces[piece['shape']][piece['rotation']][y][x] != BLANK:
-                board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
+            if(piece['alignment'] == "neutral"):
+                if PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
+            elif(piece["alignment"] == "evil"):
+                if EVIL_PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
+            elif (piece["alignment"] == "nice"):
+                if NICE_PIECES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                    board[x + piece['x']][y + piece['y']] = [piece['color'], piece['alignment'], piece['shape']]
 
 
 def getBlankBoard():
@@ -545,25 +549,31 @@ def isOnBoard(x, y):
 
 def isValidPosition(board, piece, adjX=0, adjY=0):
     # Return True if the piece is within the board and not colliding
-    alignment = piece['alignment']
-    if alignment == "neutral":
-        pieces = PIECES
-    elif alignment == "evil":
-        pieces = EVIL_PIECES
-    elif alignment == "nice":
-        pieces = NICE_PIECES
-
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
             isAboveBoard = y + piece['y'] + adjY < 0
-            if isAboveBoard or pieces[piece['shape']][piece['rotation']][y][x] == BLANK:
-                continue
-            if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
-                return False
-            if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
-                return False
+            if(piece["alignment"] == "neutral"):
+                if isAboveBoard or PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
+            elif (piece["alignment"] == "evil"):
+                if isAboveBoard or EVIL_PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
+            elif (piece["alignment"] == "nice"):
+                if isAboveBoard or NICE_PIECES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                    continue
+                if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                    return False
+                if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                    return False
     return True
-
 
 def isCompleteLine(board, y):
     # Return True if the line filled with boxes with no gaps.
@@ -572,7 +582,6 @@ def isCompleteLine(board, y):
             return False
     giveSpecialBonuses(board, y)
     return True
-
 
 def giveSpecialBonuses(board, y):
     # Check if there is an extra chance block in a completed row
@@ -584,11 +593,10 @@ def giveSpecialBonuses(board, y):
         if (board[x][y])[2] == "RR":
             REROLLS += 1
 
-
 def removeCompleteLines(board):
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
     numLinesRemoved = 0
-    y = BOARDHEIGHT - 1  # start y at the bottom of the board
+    y = BOARDHEIGHT - 1 # start y at the bottom of the board
     while y >= 0:
         if isCompleteLine(board, y):
             # Remove the line and pull boxes down by one line.
@@ -603,7 +611,7 @@ def removeCompleteLines(board):
             # This is so that if the line that was pulled down is also
             # complete, it will be removed.
         else:
-            y -= 1  # move on to check next row up
+            y -= 1 # move on to check next row up
     return numLinesRemoved
 
 
@@ -611,7 +619,6 @@ def convertToPixelCoords(boxx, boxy):
     # Convert the given xy coordinates of the board to xy
     # coordinates of the location on the screen.
     return (XMARGIN + (boxx * BOXSIZE)), (TOPMARGIN + (boxy * BOXSIZE))
-
 
 def drawAll(BGCOLOR, board, score, level, nextPiece):
     DISPLAYSURF.fill(BGCOLOR)
@@ -627,22 +634,19 @@ def drawBox(boxx, boxy, color, alignment, pixelx=None, pixely=None):
     # at xy coordinates on the board. Or, if pixelx & pixely
     # are specified, draw to the pixel coordinates stored in
     # pixelx & pixely (this is used for the "Next" piece).
-    if alignment == "neutral":
-        colors = COLORS
-        light_colors = LIGHTCOLORS
-    elif alignment == "evil":
-        colors = EVIL_COLORS
-        light_colors = EVIL_LIGHT_COLORS
-    elif alignment == "nice":
-        colors = NICE_COLORS
-        light_colors = NICE_LIGHT_COLORS
-
     if color == BLANK:
         return
     if pixelx == None and pixely == None:
         pixelx, pixely = convertToPixelCoords(boxx, boxy)
-    pygame.draw.rect(DISPLAYSURF, colors[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
-    pygame.draw.rect(DISPLAYSURF, light_colors[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    if(alignment == "neutral"):
+        pygame.draw.rect(DISPLAYSURF, COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    elif(alignment == "evil"):
+        pygame.draw.rect(DISPLAYSURF, EVIL_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, EVIL_LIGHT_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+    elif(alignment == "nice"):
+        pygame.draw.rect(DISPLAYSURF, NICE_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, NICE_LIGHT_COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
 
 
 def drawBoard(board):
@@ -681,7 +685,6 @@ def drawPiece(piece, pixelx=None, pixely=None):
         shapeToDraw = EVIL_PIECES[piece['shape']][piece['rotation']]
     elif(piece["alignment"] == "nice"):
         shapeToDraw = NICE_PIECES[piece['shape']][piece['rotation']]
-
     if pixelx == None and pixely == None:
         # if pixelx & pixely hasn't been specified, use the location stored in the piece data structure
         pixelx, pixely = convertToPixelCoords(piece['x'], piece['y'])
@@ -702,7 +705,6 @@ def drawNextPiece(piece):
     # draw the "next" piece
     drawPiece(piece, pixelx=WINDOWWIDTH-120, pixely=100)
 
-
 def drawExtraChanceStatus():
     if EXTRA_CHANCE:
         ec_status = "Yes"
@@ -713,13 +715,11 @@ def drawExtraChanceStatus():
     nextRect.topleft = (WINDOWWIDTH - 170, 200)
     DISPLAYSURF.blit(nextSurf, nextRect)
 
-
 def drawReRollsStatus():
     nextSurf = BASICFONT.render('Re-rolls:  ' + str(REROLLS), True, TEXTCOLOR)
     nextRect = nextSurf.get_rect()
     nextRect.topleft = (WINDOWWIDTH - 170, 300)
     DISPLAYSURF.blit(nextSurf, nextRect)
-
 
 def moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSidewaysTime):
     if (event.key == K_LEFT or event.key == K_a) and isValidPosition(board, fallingPiece, adjX=-1):
@@ -731,31 +731,39 @@ def moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSi
         return(False, True, time.time())
     return(movingLeft, movingRight, lastMoveSidewaysTime)
 
-
 def rotatePiece(event, fallingPiece, board):
-    alignment = fallingPiece['alignment']
-    if alignment == "neutral":
-        pieces = PIECES
-    elif alignment == "evil":
-        pieces = EVIL_PIECES
-    elif alignment == "nice":
-        pieces = NICE_PIECES
-
     # rotating the piece (if there is room to rotate)
     # no rotation of a piece
-    if STOP_ROTATION == 3 and DIFFICULTY >= 75:
+    if (STOPROTATION == 3 and DIFFICULTY >= 75):
         pass
     # regular piece rotation
-    elif STOP_ROTATION < 15:
-        if event.key == K_UP or event.key == K_w:
-            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(pieces[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
-                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(pieces[fallingPiece['shape']])
-        elif event.key == K_q:  # rotate the other direction
-            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(pieces[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
-                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(pieces[fallingPiece['shape']])
-
+    elif (STOPROTATION < 15):
+        if (event.key == K_UP or event.key == K_w):
+            if(fallingPiece["alignment"] == "neutral"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+            elif(fallingPiece["alignment"] == "evil"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "nice"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+        elif (event.key == K_q):  # rotate the other direction
+            if (fallingPiece["alignment"] == "neutral"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "evil"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "nice"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
 
 def holeMaker(piece, board):
     if(piece['y'] < BOARDHEIGHT - 3):
