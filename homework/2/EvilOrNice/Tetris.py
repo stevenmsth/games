@@ -19,6 +19,9 @@ DIFFICULTY_MAX = 99
 EXTRA_CHANCE = False
 REROLLS = 0
 
+# locking rotation of pieces chance after certain difficulty is selected
+STOPROTATION = 0
+
 MOVESIDEWAYSFREQ = 0.15
 MOVEDOWNFREQ = 0.1
 
@@ -45,13 +48,14 @@ BROWN = (139, 69, 19)
 LIGHTBROWN = (205, 133, 63)
 VIOLET = (148,  0, 211)
 LIGHTVIOLET = (238, 130, 238)
+GREY = (128, 128, 128)
 
 
 
 COLORS      = (     BLUE,      GREEN,      RED,      YELLOW)
 LIGHTCOLORS = (LIGHTBLUE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW)
 
-EVIL_COLORS = (PURPLE, ORANGE)
+EVIL_COLORS = (PURPLE, ORANGE, GREY)
 EVIL_LIGHT_COLORS = (LIGHTPURPLE, LIGHTORANGE)
 
 NICE_COLORS = (BROWN, VIOLET)
@@ -480,6 +484,9 @@ def calculateLevelAndFallFreq(score):
 def getNewPiece():
     # return a random new piece in a random rotation and color
     piece_type = random.randint(0, 3)
+    rotoStop = random.randint(0, 3)
+    global STOPROTATION
+    STOPROTATION = rotoStop
     if(piece_type == 3):
         good_or_bad = random.randint(0,DIFFICULTY_MAX)
         if(good_or_bad < DIFFICULTY):
@@ -722,32 +729,37 @@ def moveSideways(event, board, fallingPiece, movingLeft, movingRight, lastMoveSi
 
 def rotatePiece(event, fallingPiece, board):
     # rotating the piece (if there is room to rotate)
-    if (event.key == K_UP or event.key == K_w):
-        if(fallingPiece["alignment"] == "neutral"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
-                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
-        elif(fallingPiece["alignment"] == "evil"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
-                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
-        elif (fallingPiece["alignment"] == "nice"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
-                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
-    elif (event.key == K_q):  # rotate the other direction
-        if (fallingPiece["alignment"] == "neutral"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
+    # no rotation of a piece
+    if (STOPROTATION == 3 and DIFFICULTY >= 75):
+        pass
+    # regular piece rotation
+    elif (STOPROTATION < 15):
+        if (event.key == K_UP or event.key == K_w):
+            if(fallingPiece["alignment"] == "neutral"):
                 fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
-        elif (fallingPiece["alignment"] == "evil"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+            elif(fallingPiece["alignment"] == "evil"):
                 fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
-        elif (fallingPiece["alignment"] == "nice"):
-            fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
-            if not isValidPosition(board, fallingPiece):
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "nice"):
                 fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+        elif (event.key == K_q):  # rotate the other direction
+            if (fallingPiece["alignment"] == "neutral"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "evil"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(EVIL_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(EVIL_PIECES[fallingPiece['shape']])
+            elif (fallingPiece["alignment"] == "nice"):
+                fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(NICE_PIECES[fallingPiece['shape']])
+                if not isValidPosition(board, fallingPiece):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(NICE_PIECES[fallingPiece['shape']])
 
 def holeMaker(piece, board):
     if(piece['y'] < BOARDHEIGHT - 3):

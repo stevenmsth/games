@@ -10,5 +10,3 @@ For each homework assignment, I will create a new folder under "homework". Withi
 subdirectories for individual problems. This organization ensures that the source code, audio files,
 images, etc. for a given problem are neatly grouped together in our source tree. This organization can be tweaked
 if several problems are closely related and share assets and/or code.
-
-
