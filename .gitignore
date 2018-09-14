@@ -1,6 +1,7 @@
 venv
 .idea/misc.xml
 .idea/games.iml
+.idea/workspace.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
