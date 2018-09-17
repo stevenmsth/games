@@ -58,6 +58,8 @@ class Bricka:
             pygame.draw.rect(self.screen, brick.color, brick.rect)
         
     def check_input(self):
+
+        self.checkForQuit()
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_LEFT]:
@@ -142,17 +144,29 @@ class Bricka:
             x = (CONSTANTS.SCREEN_SIZE[0] - size[0]) / 2
             y = (CONSTANTS.SCREEN_SIZE[1] - size[1]) / 2
             self.screen.blit(font_surface, (x,y))
+
+    def terminate(self):
+        print("terminating")
+        pygame.quit()
+        sys.exit()
+
+    def checkForQuit(self):
+        for event in pygame.event.get(pygame.QUIT):  # get all the QUIT events
+            self.terminate()  # terminate if any QUIT events are present
+        for event in pygame.event.get(pygame.KEYUP):  # get all the KEYUP events
+            if event.key == pygame.K_ESCAPE:
+                self.terminate()  # terminate if the KEYUP event was for the Esc key
+            pygame.event.post(event)  # put the other KEYUP event objects back
         
             
     def run(self):
-        while 1:            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit
+        while 1:
 
             self.clock.tick(50)
             self.screen.fill(CONSTANTS.BLACK)
             self.check_input()
+
+            self.checkForQuit()
 
             if self.state == CONSTANTS.STATE_PLAYING:
                 self.move_ball()
