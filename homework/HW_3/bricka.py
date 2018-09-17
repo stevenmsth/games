@@ -8,8 +8,8 @@ Original code source:
 """
 import sys
 import pygame
-from games.homework.HW_3.__main__.Constants import Constants as Consts
-from games.homework.HW_3.__main__.Levels import Levels
+from homework.HW_3.__main__.Constants import Constants as Consts
+from homework.HW_3.__main__.Levels import Levels
 
 CONSTANTS = Consts()
 
