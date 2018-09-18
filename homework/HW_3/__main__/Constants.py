@@ -11,6 +11,10 @@ class Constants:
         self.BALL_DIAMETER = 16
         self.BALL_RADIUS   = self.BALL_DIAMETER // 2
 
+        # Object velocities
+        self.PADDLE_MOVE_INCREMENT = 10
+        self.BALL_VELOCITY = [5, -5]
+
         self.MAX_PADDLE_X = self.SCREEN_SIZE[0] - self.PADDLE_WIDTH
         self.MAX_BALL_X   = self.SCREEN_SIZE[0] - self.BALL_DIAMETER
         self.MAX_BALL_Y   = self.SCREEN_SIZE[1] - self.BALL_DIAMETER
