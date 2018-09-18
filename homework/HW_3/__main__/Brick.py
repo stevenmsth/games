@@ -4,30 +4,54 @@ from .Constants import Constants as Consts
 CONSTANTS = Consts()
 
 class Brick:
-    #Type: [number of hits to break, color]; hits to break < 0 for any unbreakable ones.
-    brick_types = {"Basic":[1, CONSTANTS.YELLOW], "Unbreakable":[-1, CONSTANTS.GREY], "Destroyed":[0, CONSTANTS.BLACK]}
 
-    def __init__(self, x_ofs, y_ofs, brick_type = "Basic"):
+    class STATUS:
+        NORMAL = 1
+        DAMAGED = 2
+        DESTROYED = 3
+        UNBREAKABLE = 4
+
+    STATUS_COLORS = {
+        STATUS.NORMAL: CONSTANTS.YELLOW,
+        STATUS.DAMAGED: CONSTANTS.RED,
+        STATUS.DESTROYED: CONSTANTS.BLACK,
+        STATUS.UNBREAKABLE: CONSTANTS.GREY,
+    }
+
+    hits_to_break = 1
+
+    def __init__(self, x_ofs, y_ofs, status = STATUS.NORMAL):
         self.rect = pygame.Rect(x_ofs, y_ofs, CONSTANTS.BRICK_WIDTH, CONSTANTS.BRICK_HEIGHT)
-        self.brick_type = brick_type
-        self.getTypeInfo()
-
-    def getTypeInfo(self):
-        self.hits_to_break = ((Brick.brick_types)[self.brick_type])[0]
-        self.color = ((Brick.brick_types)[self.brick_type])[1]
+        self.status = status
+        self.color = CONSTANTS.YELLOW
 
     def onHit(self):
-        to_do_name = self.brick_type + "_onHit"
-        try:
-            to_do = getattr(self, to_do_name)
-            to_do()
-        except AttributeError:
-            self.brick_type = "Destroyed"
-            self.getTypeInfo()
+        self.status = Brick.STATUS.DESTROYED
+        self.hits_to_break = 0
 
-    def Basic_onHit(self):
-        self.brick_type = "Destroyed"
-        self.getTypeInfo()
+class StrongBrick(Brick):
+    def __init__(self, x_ofs, y_ofs, status = Brick.STATUS.NORMAL):
+        Brick.__init__(self, x_ofs, y_ofs, status)
+        self.hits_to_break = 2
+        self.color = CONSTANTS.GREEN
 
-    def Unbreakable_onHit(self):
+    def onHit(self):
+        if self.hits_to_break > 0:
+            self.hits_to_break -= 1
+            self.color = CONSTANTS.RED
+        else:
+            self.status = Brick.STATUS.DESTROYED
+            self.color = Brick.STATUS_COLORS[Brick.STATUS.DESTROYED]
+
+class UnbreakableBrick(Brick):
+
+    hits_to_break = -1
+
+    def __init__(self, x_ofs, y_ofs, status = Brick.STATUS.NORMAL):
+        Brick.__init__(self, x_ofs, y_ofs, status)
+        self.color = CONSTANTS.GREY
+
+    def onHit(self):
         pass
+
+

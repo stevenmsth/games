@@ -33,7 +33,7 @@ class Bricka:
 
         
     def init_game(self):
-        self.lives = 3
+        self.lives = 10
         self.score = 0
         self.state = CONSTANTS.STATE_BALL_IN_PADDLE
 
