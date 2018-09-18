@@ -44,9 +44,9 @@ class Bricka:
 
     def init_next_level(self):
         self.lives = 3
-        keep_going = (self.levels).Load_Next_Level()
-        if (keep_going):
-            self.bricks = (self.levels).getBricks()
+        keep_going = self.levels.Load_Next_Level()
+        if keep_going:
+            self.bricks = self.levels.getBricks()
             self.paddle = pygame.Rect(300, CONSTANTS.PADDLE_Y, CONSTANTS.PADDLE_WIDTH, CONSTANTS.PADDLE_HEIGHT)
             self.ball = pygame.Rect(300, CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER, CONSTANTS.BALL_DIAMETER,
                                     CONSTANTS.BALL_DIAMETER)
@@ -105,22 +105,22 @@ class Bricka:
     def handle_collisions(self):
         for brick in self.bricks:
             if self.ball.colliderect(brick.rect):
-                if(brick.hits_to_break > 0):
+                if brick.hits_to_break > 0:
                     self.score += 3
-                if((self.ball.right - self.ball_vel[0] <= brick.rect.left or self.ball.left - self.ball_vel[0] >= brick.rect.right) and (not (self.ball.bottom - 2 < brick.rect.top or self.ball.top + 2 > brick.rect.bottom))):
+                if (self.ball.right - self.ball_vel[0] <= brick.rect.left or self.ball.left - self.ball_vel[0] >= brick.rect.right) and (not (self.ball.bottom - 2 < brick.rect.top or self.ball.top + 2 > brick.rect.bottom)):
                     self.ball_vel[0] = -self.ball_vel[0]
                 else:
                     self.ball_vel[1] = -self.ball_vel[1]
 
                 brick.onHit()
-                if(brick.hits_to_break == 0):
+                if brick.hits_to_break == 0:
                     self.bricks.remove(brick)
                 break
 
         temp_state = self.state
         self.state = CONSTANTS.STATE_GET_NEXT_LEVEL
         for brick in self.bricks:
-            if(brick.hits_to_break > 0):
+            if brick.hits_to_break > 0:
                 self.state = temp_state
             else:
                 continue
@@ -129,7 +129,7 @@ class Bricka:
         if self.ball.colliderect(self.paddle):
             self.ball.top = CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER
             self.ball_vel[1] = -self.ball_vel[1]
-            if(self.ball.left + CONSTANTS.BALL_RADIUS < self.paddle.left + (CONSTANTS.PADDLE_WIDTH // 2)):
+            if (self.ball.left + CONSTANTS.BALL_RADIUS < self.paddle.left + (CONSTANTS.PADDLE_WIDTH // 2)):
                 self.ball_vel[0] = -abs(self.ball_vel[0])
             else:
                 self.ball_vel[0] = abs(self.ball_vel[0])
