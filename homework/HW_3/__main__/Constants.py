@@ -6,7 +6,7 @@ class Constants:
         # Object dimensions
         self.BRICK_WIDTH   = 60
         self.BRICK_HEIGHT  = 15
-        self.PADDLE_WIDTH  = 60
+        self.PADDLE_WIDTH  = 100
         self.PADDLE_HEIGHT = 12
         self.BALL_DIAMETER = 16
         self.BALL_RADIUS   = self.BALL_DIAMETER // 2
