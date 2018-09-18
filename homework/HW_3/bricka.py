@@ -107,7 +107,11 @@ class Bricka:
             if self.ball.colliderect(brick.rect):
                 if(brick.hits_to_break > 0):
                     self.score += 3
-                self.ball_vel[1] = -self.ball_vel[1]
+                if((self.ball.right - self.ball_vel[0] <= brick.rect.left or self.ball.left - self.ball_vel[0] >= brick.rect.right) and (not (self.ball.bottom - 2 < brick.rect.top or self.ball.top + 2 > brick.rect.bottom))):
+                    self.ball_vel[0] = -self.ball_vel[0]
+                else:
+                    self.ball_vel[1] = -self.ball_vel[1]
+
                 brick.onHit()
                 if(brick.hits_to_break == 0):
                     self.bricks.remove(brick)
@@ -125,6 +129,11 @@ class Bricka:
         if self.ball.colliderect(self.paddle):
             self.ball.top = CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER
             self.ball_vel[1] = -self.ball_vel[1]
+            if(self.ball.left + CONSTANTS.BALL_RADIUS < self.paddle.left + (CONSTANTS.PADDLE_WIDTH // 2)):
+                self.ball_vel[0] = -abs(self.ball_vel[0])
+            else:
+                self.ball_vel[0] = abs(self.ball_vel[0])
+
         elif self.ball.top > self.paddle.top:
             self.lives -= 1
             if self.lives > 0:
@@ -188,6 +197,7 @@ class Bricka:
 
             # Draw paddle
             pygame.draw.rect(self.screen, CONSTANTS.BLUE, self.paddle)
+
 
             # Draw ball
             pygame.draw.circle(self.screen, CONSTANTS.WHITE, (self.ball.left + CONSTANTS.BALL_RADIUS, self.ball.top + CONSTANTS.BALL_RADIUS), CONSTANTS.BALL_RADIUS)
