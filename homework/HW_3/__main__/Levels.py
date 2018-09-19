@@ -1,6 +1,7 @@
 import sys, pygame
 from .Constants import Constants as Const
 from .Brick import *
+import random
 
 CONSTANTS = Const()
 
@@ -76,3 +77,11 @@ class Levels:
 
         brick = Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
         self.bricks.append(brick)
+
+    def Level_3(self):
+        self.bricks = []
+        for j in range(12):
+            a = random.randint(20, 500)
+            b = random.randint(20, 400)
+            brick = Brick(a, b)
+            self.bricks.append(brick)
