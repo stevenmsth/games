@@ -1,6 +1,7 @@
 import sys, pygame
 from .Constants import Constants as Const
 from .Brick import *
+import random
 
 CONSTANTS = Const()
 
@@ -41,38 +42,46 @@ class Levels:
     def Level_2(self):
         self.bricks = []
 
-        brick = UnbreakableBrick(65, 125)
+        brick = HARDBrick(65, 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = HARDBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 10), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(65 + CONSTANTS.BRICK_WIDTH + 10, 125 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = HARDBrick(65 + CONSTANTS.BRICK_WIDTH + 10, 125 + (CONSTANTS.BRICK_HEIGHT + 5))
         self.bricks.append(brick)
 
         brick = Brick(65 + CONSTANTS.BRICK_WIDTH + 10, 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 10), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 10), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125 + (CONSTANTS.BRICK_HEIGHT + 5))
         self.bricks.append(brick)
 
         brick = Brick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = HARDBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 5))
         self.bricks.append(brick)
 
         brick = Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
         self.bricks.append(brick)
+
+    def Level_3(self):
+        self.bricks = []
+        for j in range(12):
+            a = random.randint(20,500)
+            b = random.randint(20,400)
+            brick = Brick(a, b)
+            self.bricks.append(brick)

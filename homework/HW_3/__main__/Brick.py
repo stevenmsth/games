@@ -9,13 +9,13 @@ class Brick:
         NORMAL = 1
         DAMAGED = 2
         DESTROYED = 3
-        UNBREAKABLE = 4
+        HARD = 4
 
     STATUS_COLORS = {
         STATUS.NORMAL: CONSTANTS.YELLOW,
         STATUS.DAMAGED: CONSTANTS.RED,
         STATUS.DESTROYED: CONSTANTS.BLACK,
-        STATUS.UNBREAKABLE: CONSTANTS.GREY,
+        STATUS.HARD: CONSTANTS.GREY,
     }
 
     hits_to_break = 1
@@ -43,15 +43,18 @@ class StrongBrick(Brick):
             self.status = Brick.STATUS.DESTROYED
             self.color = Brick.STATUS_COLORS[Brick.STATUS.DESTROYED]
 
-class UnbreakableBrick(Brick):
-
-    hits_to_break = -1
-
+class HARDBrick(Brick):
     def __init__(self, x_ofs, y_ofs, status = Brick.STATUS.NORMAL):
         Brick.__init__(self, x_ofs, y_ofs, status)
+        self.hits_to_break = 4
         self.color = CONSTANTS.GREY
 
     def onHit(self):
-        pass
+        if self.hits_to_break > 0:
+            self.hits_to_break -= 1
+            self.color = CONSTANTS.BLUE
+        else:
+            self.status = Brick.STATUS.DESTROYED
+            self.color = Brick.STATUS_COLORS[Brick.STATUS.DESTROYED]
 
 
