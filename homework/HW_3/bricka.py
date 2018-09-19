@@ -63,12 +63,12 @@ class Bricka:
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_LEFT]:
-            self.paddle.left -= 5
+            self.paddle.left -= CONSTANTS.PADDLE_SPEED
             if self.paddle.left < 0:
                 self.paddle.left = 0
 
         if keys[pygame.K_RIGHT]:
-            self.paddle.left += 5
+            self.paddle.left += CONSTANTS.PADDLE_SPEED
             if self.paddle.left > CONSTANTS.MAX_PADDLE_X:
                 self.paddle.left = CONSTANTS.MAX_PADDLE_X
 
@@ -83,6 +83,17 @@ class Bricka:
                         self.init_game()
                     elif(self.state == CONSTANTS.STATE_GET_NEXT_LEVEL):
                         self.state = CONSTANTS.STATE_START_NEXT_LEVEL
+
+                if event.key == pygame.K_s:
+                    if CONSTANTS.PADDLE_SPEED == 5:
+                        CONSTANTS.PADDLE_SPEED = 10
+                    else:
+                        CONSTANTS.PADDLE_SPEED = 5
+
+                if event.key == pygame.K_z:
+                    for brick in self.bricks:
+                        brick.onHit()
+
 
     def move_ball(self):
         self.ball.left += self.ball_vel[0]

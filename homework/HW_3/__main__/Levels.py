@@ -41,38 +41,38 @@ class Levels:
     def Level_2(self):
         self.bricks = []
 
-        brick = UnbreakableBrick(65, 125)
+        brick = StrongBrick(65, 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = StrongBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 15), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(65 + CONSTANTS.BRICK_WIDTH + 10, 125 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = StrongBrick(65 + CONSTANTS.BRICK_WIDTH + 15, 125 + (CONSTANTS.BRICK_HEIGHT + 15))
         self.bricks.append(brick)
 
-        brick = Brick(65 + CONSTANTS.BRICK_WIDTH + 10, 125)
+        brick = Brick(65 + CONSTANTS.BRICK_WIDTH + 15, 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 15), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 15), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 15), 125 + (CONSTANTS.BRICK_HEIGHT + 15))
         self.bricks.append(brick)
 
-        brick = Brick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125)
+        brick = Brick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 15), 125)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
         self.bricks.append(brick)
 
-        brick = UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 5))
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 15))
         self.bricks.append(brick)
 
-        brick = Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255)
+        brick = Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
         self.bricks.append(brick)

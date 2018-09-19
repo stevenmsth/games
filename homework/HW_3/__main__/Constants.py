@@ -14,6 +14,7 @@ class Constants:
         self.MAX_PADDLE_X = self.SCREEN_SIZE[0] - self.PADDLE_WIDTH
         self.MAX_BALL_X   = self.SCREEN_SIZE[0] - self.BALL_DIAMETER
         self.MAX_BALL_Y   = self.SCREEN_SIZE[1] - self.BALL_DIAMETER
+        self.PADDLE_SPEED = 5
 
         # Paddle Y coordinate
         self.PADDLE_Y = self.SCREEN_SIZE[1] - self.PADDLE_HEIGHT - 10
@@ -27,6 +28,7 @@ class Constants:
         self.GREEN = (0, 255, 0)
         self.RED = (255, 0, 0)
         self.BRICK_COLOR = (200,200,0)
+
 
         # State constants
         self.STATE_BALL_IN_PADDLE = 0
