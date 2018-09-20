@@ -15,6 +15,9 @@ class Levels:
         return self.bricks
 
     def Load_Next_Level(self):
+        self.Level_4()
+        return True
+
         self.current_level += 1
         level = "Level_" + str(self.current_level)
         try:
@@ -82,5 +85,10 @@ class Levels:
             for y in range(0, 4):
                 self.bricks.append(Brick(x*(CONSTANTS.BRICK_WIDTH + 10) + 10, (CONSTANTS.BRICK_HEIGHT + 10)*y + 75))
 
-        self.bricks.extend(CamoUnbreakableBrick(x * (CONSTANTS.BRICK_WIDTH + 10) + 215, 250) for x in range(3))
+        self.bricks.extend(CamoUnbreakableBrick(x * (CONSTANTS.BRICK_WIDTH + 10) + 220, 250) for x in range(3))
 
+        for x in range(0, 3):
+            self.bricks.append(Brick(x*(CONSTANTS.BRICK_WIDTH + 10) + 10, (CONSTANTS.BRICK_HEIGHT + 10)*7 + 75))
+
+        for x in range(6, 9):
+            self.bricks.append(Brick(x*(CONSTANTS.BRICK_WIDTH + 10) + 10, (CONSTANTS.BRICK_HEIGHT + 10)*7 + 75))
