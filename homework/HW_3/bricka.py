@@ -50,6 +50,7 @@ class Bricka:
             self.paddle = pygame.Rect(300, CONSTANTS.PADDLE_Y, CONSTANTS.PADDLE_WIDTH, CONSTANTS.PADDLE_HEIGHT)
             self.ball = pygame.Rect(300, CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER, CONSTANTS.BALL_DIAMETER,
                                     CONSTANTS.BALL_DIAMETER)
+            self.state = CONSTANTS.STATE_BALL_IN_PADDLE
         else:
             self.state = CONSTANTS.STATE_WON
 
@@ -64,13 +65,11 @@ class Bricka:
         
         if keys[pygame.K_LEFT]:
             self.paddle.left -= CONSTANTS.PADDLE_MOVE_INCREMENT
-            self.paddle.left -= CONSTANTS.PADDLE_SPEED
             if self.paddle.left < 0:
                 self.paddle.left = 0
 
         if keys[pygame.K_RIGHT]:
             self.paddle.left += CONSTANTS.PADDLE_MOVE_INCREMENT
-            self.paddle.left += CONSTANTS.PADDLE_SPEED
             if self.paddle.left > CONSTANTS.MAX_PADDLE_X:
                 self.paddle.left = CONSTANTS.MAX_PADDLE_X
 
@@ -87,14 +86,16 @@ class Bricka:
                         self.state = CONSTANTS.STATE_START_NEXT_LEVEL
 
                 if event.key == pygame.K_s:
-                    if CONSTANTS.PADDLE_SPEED == 5:
-                        CONSTANTS.PADDLE_SPEED = 10
+                    if CONSTANTS.PADDLE_MOVE_INCREMENT == 10:
+                        CONSTANTS.PADDLE_MOVE_INCREMENT = 20
                     else:
-                        CONSTANTS.PADDLE_SPEED = 5
+                        CONSTANTS.PADDLE_MOVE_INCREMENT = 10
 
                 if event.key == pygame.K_z:
                     for brick in self.bricks:
                         brick.onHit()
+                        if brick.hits_to_break == 0:
+                            self.bricks.remove(brick)
 
 
     def move_ball(self):
