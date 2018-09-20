@@ -23,7 +23,7 @@ class Brick:
     def __init__(self, x_ofs, y_ofs, status = STATUS.NORMAL):
         self.rect = pygame.Rect(x_ofs, y_ofs, CONSTANTS.BRICK_WIDTH, CONSTANTS.BRICK_HEIGHT)
         self.status = status
-        self.color = CONSTANTS.YELLOW
+        self.color = CONSTANTS.RED
 
     def onHit(self):
         self.status = Brick.STATUS.DESTROYED
