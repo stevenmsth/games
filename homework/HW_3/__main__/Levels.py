@@ -40,35 +40,44 @@ class Levels:
             y_ofs += CONSTANTS.BRICK_HEIGHT + 5
 
     def Level_2(self):
-        self.bricks = [
-
-            UnbreakableBrick(65, 125),
-
-            UnbreakableBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 10), 125),
-
-            UnbreakableBrick(65 + CONSTANTS.BRICK_WIDTH + 10, 125 + (CONSTANTS.BRICK_HEIGHT + 5)),
-
-            Brick(65 + CONSTANTS.BRICK_WIDTH + 10, 125),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 10), 125),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 10), 125),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125 + (CONSTANTS.BRICK_HEIGHT + 5)),
-
-            Brick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 10), 125),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 10) // 2, 255),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 10) // 2, 255),
-
-            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 5)),
-
-            Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 10) // 2, 255),
-        ]
-
-    def Level_3(self):
         self.bricks = []
+
+        brick = StrongBrick(65, 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(65 + 2 * (CONSTANTS.BRICK_WIDTH + 15), 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(65 + CONSTANTS.BRICK_WIDTH + 15, 125 + (CONSTANTS.BRICK_HEIGHT + 15))
+        self.bricks.append(brick)
+
+        brick = Brick(65 + CONSTANTS.BRICK_WIDTH + 15, 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - (CONSTANTS.BRICK_WIDTH + 15), 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 3 * (CONSTANTS.BRICK_WIDTH + 15), 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 15), 125 + (CONSTANTS.BRICK_HEIGHT + 15))
+        self.bricks.append(brick)
+
+        brick = Brick(CONSTANTS.SCREEN_SIZE[0] - 65 - 2 * (CONSTANTS.BRICK_WIDTH + 15), 125)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  - 3 * (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  + (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
+        self.bricks.append(brick)
+
+        brick = StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 15))
+        self.bricks.append(brick)
+
+        brick = Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255)
+        self.bricks.append(brick)
+
         for j in range(12):
             a = random.randint(20, 500)
             b = random.randint(20, 400)
