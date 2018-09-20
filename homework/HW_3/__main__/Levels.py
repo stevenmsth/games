@@ -35,7 +35,7 @@ class Levels:
                     next_brick = StrongBrick(x_ofs, y_ofs)
                 else:
                     next_brick = Brick(x_ofs, y_ofs)
-                (self.bricks).append(next_brick)
+                self.bricks.append(next_brick)
                 x_ofs += CONSTANTS.BRICK_WIDTH + 10
             y_ofs += CONSTANTS.BRICK_HEIGHT + 5
 
@@ -74,3 +74,14 @@ class Levels:
             b = random.randint(20, 400)
             brick = Brick(a, b)
             self.bricks.append(brick)
+
+    def Level_4(self):
+
+        self.bricks = []
+
+        for x in range(0, 9):
+            for y in range(0, 4):
+                self.bricks.append(Brick(x*(CONSTANTS.BRICK_WIDTH + 10) + 10, (CONSTANTS.BRICK_HEIGHT + 10)*y + 75))
+
+        self.bricks.extend(TrickyBrick(x*(CONSTANTS.BRICK_WIDTH + 10) + 215, 250) for x in range(3))
+

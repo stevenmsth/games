@@ -55,3 +55,8 @@ class UnbreakableBrick(Brick):
         pass
 
 
+class TrickyBrick(Brick):
+
+    def onHit(self):
+        self.color = CONSTANTS.GREY
+        self.STATUS.UNBREAKABLE
