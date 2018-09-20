@@ -55,3 +55,10 @@ class UnbreakableBrick(Brick):
         pass
 
 
+class CamoUnbreakableBrick(Brick):
+
+    hits_to_break = -1
+
+    def onHit(self):
+        self.color = CONSTANTS.GREY
+        self.STATUS.UNBREAKABLE
