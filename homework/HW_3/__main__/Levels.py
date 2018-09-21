@@ -117,8 +117,6 @@ class Levels:
                 elif (count == 81) or (88 <= count <= 89) or (96 <= count <= 98) or (103 <= count <= 107)  \
                         or (111 <= count <= 115) or (count >= 118):
                     pass
-                elif count == rand_brick:
-                    next_brick = TrollBrick(x_ofs, y_ofs)
                 elif count == 2 or count == 7 or count == 11 or count == 14 or 20 <= count <= 21:
                     next_brick = Brick(x_ofs, y_ofs)
                 else:
