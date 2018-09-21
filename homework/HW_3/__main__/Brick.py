@@ -1,4 +1,5 @@
 import pygame
+import random
 from .Constants import Constants as Consts
 
 CONSTANTS = Consts()
@@ -54,6 +55,35 @@ class UnbreakableBrick(Brick):
     def onHit(self):
         pass
 
+class ThanosBrick(Brick):
+    count = 0
+    randUnlockTime = random.randint(240000, 360000)
+    def __init__(self, x_ofs, y_ofs, status = Brick.STATUS.NORMAL):
+        Brick.__init__(self, x_ofs, y_ofs, status)
+        self.color = CONSTANTS.PURPLE
+        self.hits_to_break = -1
+
+    def onHit(self):
+
+        if pygame.time.get_ticks() >= self.randUnlockTime:
+            if self.count == 0:
+                self.count += 1
+                self.hits_to_break = 3
+                pass
+
+            if self.hits_to_break > 0:
+                if self.hits_to_break == 3:
+                    self.hits_to_break += -1
+                    pass
+                elif self.hits_to_break == 2:
+                    self.hits_to_break += -1
+                    self.color = CONSTANTS.GREEN
+                else:
+                    self.hits_to_break += -1
+                    self.color = CONSTANTS.RED
+            else:
+                self.status = Brick.STATUS.DESTROYED
+                self.color = Brick.STATUS_COLORS[Brick.STATUS.DESTROYED]
 
 class CamoUnbreakableBrick(Brick):
 

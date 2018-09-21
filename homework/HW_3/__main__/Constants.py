@@ -26,11 +26,12 @@ class Constants:
         self.BLACK = (0,0,0)
         self.WHITE = (255,255,255)
         self.GREY = (128, 128, 128)
-        self.BLUE  = (0,0,255)
+        self.BLUE = (0,0,255)
         self.YELLOW = (200,200,0)
         self.GREEN = (0, 255, 0)
         self.RED = (255, 0, 0)
         self.BRICK_COLOR = (200,200,0)
+        self.PURPLE = (148, 0, 211)
 
 
         # State constants

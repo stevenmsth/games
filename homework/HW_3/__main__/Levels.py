@@ -9,7 +9,7 @@ class Levels:
 
     def __init__(self):
         self.bricks = []
-        self.current_level = 1
+        self.current_level = 0
 
     def getBricks(self):
         return self.bricks
@@ -98,3 +98,30 @@ class Levels:
 
         for x in range(6, 9):
             self.bricks.append(Brick(x*(CONSTANTS.BRICK_WIDTH + 10) + 10, (CONSTANTS.BRICK_HEIGHT + 10)*7 + 75))
+
+    def Level_5(self):
+        self.bricks = []
+        y_ofs = 35
+        count = 0
+        rand_brick = 0
+        for i in range(15):
+            x_ofs = 42
+            for j in range(8):
+                count += 1
+                if (26 <= count <= 27) or (30 <= count <= 31) or (34 <= count <= 35) or (38 <= count <= 39) \
+                        or (count == 65) or (72 <= count <= 73) or (count == 80) or (count == 99) or (count == 102) \
+                        or (count == 107) or (count == 110) or (count == 116) or (count == 117):
+                    next_brick = UnbreakableBrick(x_ofs, y_ofs)
+                elif (52 <= count <= 53) or (60 <= count <= 61) or (count == 82) or (count == 87) or (count == 90) or (count == 95):
+                    next_brick = ThanosBrick(x_ofs, y_ofs)
+                elif (count == 81) or (88 <= count <= 89) or (96 <= count <= 98) or (103 <= count <= 107)  \
+                        or (111 <= count <= 115) or (count >= 118):
+                    pass
+                elif count == 2 or count == 7 or count == 11 or count == 14 or 20 <= count <= 21:
+                    next_brick = Brick(x_ofs, y_ofs)
+                else:
+                    next_brick = StrongBrick(x_ofs, y_ofs)
+
+                (self.bricks).append(next_brick)
+                x_ofs += CONSTANTS.BRICK_WIDTH + 10
+            y_ofs += CONSTANTS.BRICK_HEIGHT + 5
