@@ -7,6 +7,7 @@ Original code source:
      http://codeNtronix.com
 """
 import sys
+import tkinter
 import pygame
 from homework.HW_3.__main__.Constants import Constants as Consts
 from homework.HW_3.__main__.Levels import Levels
@@ -50,6 +51,7 @@ class Bricka:
             self.paddle = pygame.Rect(300, CONSTANTS.PADDLE_Y, CONSTANTS.PADDLE_WIDTH, CONSTANTS.PADDLE_HEIGHT)
             self.ball = pygame.Rect(300, CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER, CONSTANTS.BALL_DIAMETER,
                                     CONSTANTS.BALL_DIAMETER)
+            self.state = CONSTANTS.STATE_BALL_IN_PADDLE
         else:
             self.state = CONSTANTS.STATE_WON
 
@@ -64,13 +66,11 @@ class Bricka:
         
         if keys[pygame.K_LEFT]:
             self.paddle.left -= CONSTANTS.PADDLE_MOVE_INCREMENT
-            self.paddle.left -= CONSTANTS.PADDLE_SPEED
             if self.paddle.left < 0:
                 self.paddle.left = 0
 
         if keys[pygame.K_RIGHT]:
             self.paddle.left += CONSTANTS.PADDLE_MOVE_INCREMENT
-            self.paddle.left += CONSTANTS.PADDLE_SPEED
             if self.paddle.left > CONSTANTS.MAX_PADDLE_X:
                 self.paddle.left = CONSTANTS.MAX_PADDLE_X
 
@@ -86,15 +86,79 @@ class Bricka:
                     elif(self.state == CONSTANTS.STATE_GET_NEXT_LEVEL):
                         self.state = CONSTANTS.STATE_START_NEXT_LEVEL
 
+                if event.key == pygame.K_UP and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and (CONSTANTS.STATE_CL == 6 or CONSTANTS.STATE_CL == 7):
+                    CONSTANTS.STATE_CL += 1
+                elif event.key != pygame.K_UP:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
+                if event.key == pygame.K_a and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and CONSTANTS.STATE_CL == 15:
+                    self.cl = tkinter.Tk()
+                    self.cl.geometry("400x150")
+
+                    self.frame = tkinter.Frame(self.cl)
+                    self.frame.pack()
+
+                    self.message = tkinter.Label(self.frame, text="Enter the number below\n")
+                    self.message.pack()
+
+                    self.ls = tkinter.Entry(self.frame)
+                    self.ls.pack()
+
+                    self.cfl = tkinter.Button(self.frame, text="Confirm", command=self.cL)
+                    self.cfl.pack()
+
+                    self.cl.mainloop()
+                elif event.key != pygame.K_a:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
+                if event.key == pygame.K_LEFT and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and (CONSTANTS.STATE_CL == 10 or CONSTANTS.STATE_CL == 12):
+                    CONSTANTS.STATE_CL += 1
+                elif event.key != pygame.K_LEFT:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
                 if event.key == pygame.K_s:
-                    if CONSTANTS.PADDLE_SPEED == 5:
-                        CONSTANTS.PADDLE_SPEED = 10
+                    if CONSTANTS.PADDLE_MOVE_INCREMENT == 10:
+                        CONSTANTS.PADDLE_MOVE_INCREMENT = 20
                     else:
-                        CONSTANTS.PADDLE_SPEED = 5
+                        CONSTANTS.PADDLE_MOVE_INCREMENT = 10
+
+                if event.key == pygame.K_DOWN and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and (CONSTANTS.STATE_CL == 8 or CONSTANTS.STATE_CL == 9):
+                    CONSTANTS.STATE_CL += 1
+                elif event.key != pygame.K_DOWN:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
+                if event.key == pygame.K_RIGHT and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and (CONSTANTS.STATE_CL == 11 or CONSTANTS.STATE_CL == 13):
+                    CONSTANTS.STATE_CL += 1
+                elif event.key != pygame.K_RIGHT:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
 
                 if event.key == pygame.K_z:
                     for brick in self.bricks:
                         brick.onHit()
+                        if brick.hits_to_break == 0:
+                            self.bricks.remove(brick)
+
+                if event.key == pygame.K_b and self.state == CONSTANTS.STATE_BALL_IN_PADDLE and self.levels.current_level == 1 and self.lives == 3 and CONSTANTS.STATE_CL == 14:
+                    CONSTANTS.STATE_CL += 1
+                elif event.key != pygame.K_b:
+                    pass
+                else:
+                    CONSTANTS.STATE_CL = 6
+
+                if not (event.key == pygame.K_b or event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_a):
+                    CONSTANTS.STATE_CL = 6
+
 
 
     def move_ball(self):
@@ -122,8 +186,16 @@ class Bricka:
                     self.score += 3
                 if (self.ball.right - self.ball_vel[0] <= brick.rect.left or self.ball.left - self.ball_vel[0] >= brick.rect.right) and (not (self.ball.bottom - 2 < brick.rect.top or self.ball.top + 2 > brick.rect.bottom)):
                     self.ball_vel[0] = -self.ball_vel[0]
+                    if self.ball.right + self.ball_vel[0] <= brick.rect.left:
+                        self.ball.right = brick.rect.left + self.ball_vel[0]
+                    if self.ball.left + self.ball_vel[0] >= brick.rect.right:
+                        self.ball.left = brick.rect.right + self.ball_vel[0]
                 else:
                     self.ball_vel[1] = -self.ball_vel[1]
+                    if self.ball.bottom + self.ball_vel[1] < brick.rect.top:
+                        self.ball.bottom = brick.rect.top + self.ball_vel[1]
+                    if self.ball.top + self.ball_vel[1] >= brick.rect.bottom:
+                        self.ball.top = brick.rect.bottom + self.ball_vel[1]
 
                 brick.onHit()
                 if brick.hits_to_break == 0:
@@ -142,10 +214,17 @@ class Bricka:
         if self.ball.colliderect(self.paddle):
             self.ball.top = CONSTANTS.PADDLE_Y - CONSTANTS.BALL_DIAMETER
             self.ball_vel[1] = -self.ball_vel[1]
+
             if (self.ball.left + CONSTANTS.BALL_RADIUS < self.paddle.left + (CONSTANTS.PADDLE_WIDTH // 2)):
-                self.ball_vel[0] = -abs(self.ball_vel[0])
+                if (self.ball.left + CONSTANTS.BALL_RADIUS < self.paddle.left + (CONSTANTS.PADDLE_WIDTH // 4)):
+                    self.ball_vel[0] = -7
+                else:
+                    self.ball_vel[0] = -5
             else:
-                self.ball_vel[0] = abs(self.ball_vel[0])
+                if (self.ball.left + CONSTANTS.BALL_RADIUS > self.paddle.left + (3 * CONSTANTS.PADDLE_WIDTH // 4)):
+                    self.ball_vel[0] = 7
+                else:
+                    self.ball_vel[0] = 5
 
         elif self.ball.top > self.paddle.top:
             self.lives -= 1
@@ -158,6 +237,22 @@ class Bricka:
         if self.font:
             font_surface = self.font.render("SCORE: " + str(self.score) + " LIVES: " + str(self.lives), False, CONSTANTS.WHITE)
             self.screen.blit(font_surface, (205,5))
+
+    def cL(self):
+        temp = self.ls.get()
+        try:
+            self.levels.current_level = int(temp) - 1
+        except ValueError:
+            self.message.config(text="Not an integer. Enter an integer.")
+            return -1
+        if (self.levels.current_level < 0):
+            self.levels.current_level = 1
+            self.message.config(text="Number must be greater than 0.")
+            return -1
+
+        self.init_next_level()
+        self.cl.withdraw()
+        self.cl.quit()
 
     def show_message(self,message):
         if self.font:

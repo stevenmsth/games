@@ -18,7 +18,6 @@ class Constants:
         self.MAX_PADDLE_X = self.SCREEN_SIZE[0] - self.PADDLE_WIDTH
         self.MAX_BALL_X   = self.SCREEN_SIZE[0] - self.BALL_DIAMETER
         self.MAX_BALL_Y   = self.SCREEN_SIZE[1] - self.BALL_DIAMETER
-        self.PADDLE_SPEED = 5
 
         # Paddle Y coordinate
         self.PADDLE_Y = self.SCREEN_SIZE[1] - self.PADDLE_HEIGHT - 10
@@ -42,3 +41,4 @@ class Constants:
         self.STATE_GAME_OVER = 3
         self.STATE_GET_NEXT_LEVEL = 4
         self.STATE_START_NEXT_LEVEL = 5
+        self.STATE_CL = 6

@@ -85,16 +85,10 @@ class ThanosBrick(Brick):
                 self.status = Brick.STATUS.DESTROYED
                 self.color = Brick.STATUS_COLORS[Brick.STATUS.DESTROYED]
 
+class CamoUnbreakableBrick(Brick):
 
-class TrollBrick(Brick):
-
-    hits_to_break = 1
-    restartLevel = False
-
-    def __init__(self, x_ofs, y_ofs, status = Brick.STATUS.NORMAL):
-        self.rect = pygame.Rect(x_ofs, y_ofs, CONSTANTS.BRICK_WIDTH, CONSTANTS.BRICK_HEIGHT)
-        self.status = status
-        self.color = CONSTANTS.WHITE
+    hits_to_break = -1
 
     def onHit(self):
-        restartLevel = True
+        self.color = CONSTANTS.GREY
+        self.STATUS.UNBREAKABLE
