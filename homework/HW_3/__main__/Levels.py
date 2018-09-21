@@ -9,15 +9,12 @@ class Levels:
 
     def __init__(self):
         self.bricks = []
-        self.current_level = 0
+        self.current_level = 1
 
     def getBricks(self):
         return self.bricks
 
     def Load_Next_Level(self):
-        self.Level_4()
-        return True
-
         self.current_level += 1
         level = "Level_" + str(self.current_level)
         try:
@@ -68,9 +65,18 @@ class Levels:
             StrongBrick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255 + (CONSTANTS.BRICK_HEIGHT + 15)),
 
             Brick(CONSTANTS.SCREEN_SIZE[0]//2  - (CONSTANTS.BRICK_WIDTH + 15) // 2, 255),
+
+            UnbreakableBrick(0, 20),
+
+            UnbreakableBrick((CONSTANTS.BRICK_WIDTH + 15), 20),
+
+            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - CONSTANTS.BRICK_WIDTH, 20),
+
+            UnbreakableBrick(CONSTANTS.SCREEN_SIZE[0] - CONSTANTS.BRICK_WIDTH - (CONSTANTS.BRICK_WIDTH + 15), 20),
         ]
 
     def Level_3(self):
+        self.bricks = []
         for j in range(12):
             a = random.randint(20, 500)
             b = random.randint(20, 400)

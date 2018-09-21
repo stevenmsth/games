@@ -40,3 +40,4 @@ class Constants:
         self.STATE_GAME_OVER = 3
         self.STATE_GET_NEXT_LEVEL = 4
         self.STATE_START_NEXT_LEVEL = 5
+        self.STATE_CL = 6
